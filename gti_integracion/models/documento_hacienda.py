@@ -508,7 +508,7 @@ class DocumentoHacienda(models.Model):
                     }
                 ],
                 "UnidadMedida": int(line.product_uom_id.code) if line.product_uom_id.code else 1,
-                "Descripcion":  str(line.product_id.product_tmpl_id.name),
+                "Descripcion":  str(line.product_id.product_tmpl_id.display_name),
                 "PrecioUnitario": round(line.price_unit,5),
                 "CodProdServ": [line.product_id.product_tmpl_id.name],
                 "Codigo": line.product_id.cabys if line.product_id.cabys else line.product_id.product_tmpl_id.cabys  ,
