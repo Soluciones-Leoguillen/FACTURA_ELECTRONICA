@@ -1,76 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- Resource: uom.category -->
-    <record id="product_uom_categ_area" model="uom.category">
-        <field name="name">Area</field>
-    </record>
-    <record id="product_uom_categ_service" model="uom.category">
-        <field name="name">Services</field>
-    </record>
-    <record id="product_uom_categ_rent" model="uom.category">
-        <field name="name">Rent</field>
-    </record>
-    <record id="product_uom_categ_others" model="uom.category">
-        <field name="name">Otros</field>
-    </record>
-    <record id="product_uom_categ_time" model="uom.category">
-        <field name="name">Tiempo</field>
-    </record>
-    <record id="product_uom_categ_temperature" model="uom.category">
-        <field name="name">Temperatura</field>
-    </record>
-    <record id="product_uom_categ_electricity" model="uom.category">
-        <field name="name">Electricidad</field>
-    </record>
-    <record id="product_uom_categ_services" model="uom.category">
-        <field name="name">Servicios</field>
-    </record>
-    <record id="product_uom_categ_uncategorized" model="uom.category">
-        <field name="name">Sin clasificar</field>
-    </record>
-    <record id="product_uom_categ_radioactivity" model="uom.category">
-        <field name="name">Radioactividad</field>
-    </record>
-    <record id="product_uom_categ_commercial_units" model="uom.category">
-        <field name="name">Unidades comerciales</field>
-    </record>
-    <record id="product_uom_categ_luminous" model="uom.category">
-        <field name="name">Luminosa</field>
-    </record>
-    <record id="product_uom_categ_energy" model="uom.category">
-        <field name="name">Energía</field>
-    </record>
-    <record id="product_uom_categ_derived_magnitudes" model="uom.category">
-        <field name="name">Magnitudes derivadas</field>
-    </record>
-    <record id="product_uom_categ_frequency" model="uom.category">
-        <field name="name">Frecuencia</field>
-    </record>
-    <record id="product_uom_categ_substance_quantity" model="uom.category">
-        <field name="name">Cantidad de sustancia</field>
-    </record>
-    <record id="product_uom_categ_mass" model="uom.category">
-        <field name="name">Masa</field>
-    </record>
-    <record id="product_uom_categ_dimension" model="uom.category">
-        <field name="name">Dimensión</field>
-    </record>
-    <record id="product_uom_categ_power" model="uom.category">
-        <field name="name">Potencia</field>
-    </record>
-    <record id="product_uom_categ_area" model="uom.category">
-        <field name="name">Área</field>
-    </record>
-    <record id="product_uom_categ_force" model="uom.category">
-        <field name="name">Fuerza</field>
-    </record>
-    <record id="product_uom_categ_angle" model="uom.category">
-        <field name="name">Ángulo</field>
-    </record>
-    <record id="product_uom_categ_pressure" model="uom.category">
-        <field name="name">Presión</field>
-    </record>
-
     <function name="write" model="ir.model.data">
         <function name="search" model="ir.model.data">
             <value eval="[('module', '=', 'uom'), ('model', '=', 'uom.uom')]"/>
@@ -79,107 +8,81 @@
     </function>
     <!-- Resource: uom.uom -->
     <record id="uom.product_uom_cm" model="uom.uom">
-        <field name="category_id" ref="uom.uom_categ_length" />
         <field name="name">Centímetro</field>
         <field name="code">93</field>
         <field name="symbol">cm</field>
-        <field name="uom_type">smaller</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_day" model="uom.uom">
-        <field name="category_id" ref="uom.uom_categ_wtime" />
         <field name="name">Día(s)</field>
         <field name="code">14</field>
         <field name="symbol">D</field>
         <field name="active">True</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="uom.product_uom_gram" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_kgm" />
         <field name="name">Gramo</field>
         <field name="code">20</field>
         <field name="symbol">G</field>
-        <field name="uom_type">smaller</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_gal" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_vol" />
         <field name="name">Galón</field>
         <field name="code">7</field>
         <field name="symbol">Gal</field>
-        <field name="uom_type">bigger</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_hour" model="uom.uom">
-        <field name="category_id" ref="uom.uom_categ_wtime" />
         <field name="name">Hora(s)</field>
         <field name="code">13</field>
         <field name="symbol">h</field>
-        <field name="uom_type">smaller</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_kgm" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_kgm" />
         <field name="name">Kilogramo</field>
         <field name="code">2</field>
         <field name="symbol">Kg</field>
-        <field name="uom_type">reference</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_km" model="uom.uom">
-        <field name="category_id" ref="uom.uom_categ_length" />
         <field name="name">Kilómetro</field>
         <field name="code">91</field>
         <field name="symbol">Km</field>
-        <field name="uom_type">bigger</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_litre" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_vol" />
         <field name="name">Litro</field>
         <field name="code">5</field>
         <field name="symbol">L</field>
-        <field name="uom_type">reference</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_inch" model="uom.uom">
-        <field name="category_id" ref="uom.uom_categ_length" />
         <field name="name">Pulgada</field>
         <field name="code">92</field>
         <field name="symbol">Ln</field>
-        <field name="uom_type">smaller</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_meter" model="uom.uom">
-        <field name="category_id" ref="uom.uom_categ_length" />
         <field name="name">Metro</field>
         <field name="code">10</field>
         <field name="symbol">M</field>
-        <field name="uom_type">reference</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_oz" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_kgm" />
         <field name="name">Onzas</field>
         <field name="code">4</field>
         <field name="symbol">Oz</field>
-        <field name="uom_type">smaller</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_ton" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_kgm" />
         <field name="name">Tonelada</field>
         <field name="code">23</field>
         <field name="symbol">T</field>
-        <field name="uom_type">bigger</field>
         <field name="active">True</field>
     </record>
     <record id="uom.product_uom_unit" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_unit" />
         <field name="name">Unidad</field>
         <field name="code">1</field>
         <field name="symbol">Unid</field>
-        <field name="uom_type">reference</field>
         <field name="active">True</field>
     </record>
 <!--    <function name="write" model="ir.model.data">-->
@@ -189,83 +92,74 @@
 <!--        <value eval="{'noupdate': True}"/>-->
 <!--    </function>-->
     <record id="product_uom_mcubico" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_vol"/>
         <field name="name">Metro Cubico</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">31</field>
         <field name="symbol">m³</field>
-        <field name="uom_type">bigger</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_sp" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_service"/>
         <field name="name">Servicios Profesionales</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">24</field>
         <field name="symbol">Sp</field>
-        <field name="uom_type">reference</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_spe" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_service"/>
         <field name="name">Servicios Personales</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">101</field>
         <field name="symbol">Spe</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_st" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_service"/>
         <field name="name">Servicios Técnicos</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">102</field>
         <field name="symbol">St</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_os" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_service"/>
         <field name="name">Otro Tipo de Servicio</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">100</field>
         <field name="symbol">Os</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_i" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_unit"/>
         <field name="name">Intereses</field>
         <field name="code">99</field>
         <field name="symbol">I</field>
-        <field name="uom_type">bigger</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_com" model="uom.uom">
-        <field name="category_id" ref="uom.product_uom_categ_unit"/>
         <field name="name">Comisiones</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">98</field>
         <field name="symbol">Cm</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_alc" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_rent"/>
         <field name="name">Alquiler de Uso Comercial</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">97</field>
         <field name="symbol">Alc</field>
-        <field name="uom_type">reference</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_al" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_rent"/>
         <field name="name">Alquiler de Uso Habitacional</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">105</field>
         <field name="symbol">Al</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
 <!--    <record id="product_uom_qt" model="uom.uom">-->
 <!--        <field name="category_id" ref="uom.product_uom_categ_vol"/>-->
@@ -310,252 +204,199 @@
 <!--        <field name="active">False</field>-->
 <!--    </record>-->
     <record id="product_uom_mcuadrado" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_area"/>
         <field name="name">Metro Cuadrado</field>
         <field name="factor" eval="1.0"/>
         <field name="rounding" eval="0.01"/>
         <field name="code">30</field>
         <field name="symbol">m²</field>
-        <field name="uom_type">reference</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_1" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_others"/>
         <field name="name">uno (índice de refracción)</field>
         <field name="code">40</field>
         <field name="symbol">1</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_minute" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_time"/>
         <field name="name">minuto</field>
         <field name="code">106</field>
         <field name="symbol">´</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_second" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_time"/>
         <field name="name">segundo</field>
         <field name="code">107</field>
         <field name="symbol">´´</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_celsius" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_temperature"/>
         <field name="name">grado Celsius</field>
         <field name="code">56</field>
         <field name="symbol">°C</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_1_per_meter" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_others"/>
         <field name="name">1 por metro</field>
         <field name="code">34</field>
         <field name="symbol">1/m</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_ampere" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">Ampere</field>
         <field name="code">26</field>
         <field name="symbol">A</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_ampere_per_meter" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">ampere por metro</field>
         <field name="code">37</field>
         <field name="symbol">A/m</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_ampere_per_meter_squared" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">ampere por metro cuadrado</field>
         <field name="code">36</field>
         <field name="symbol">A/m²</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_acv" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_services"/>
         <field name="name">Activo Virtual</field>
         <field name="code">108</field>
         <field name="symbol">Acv</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_bel" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_uncategorized"/>
         <field name="name">bel</field>
         <field name="code">87</field>
         <field name="symbol">B</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_becquerel" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_radioactivity"/>
         <field name="name">Becquerel</field>
         <field name="code">59</field>
         <field name="symbol">Bq</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_coulomb" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">coulomb</field>
         <field name="code">48</field>
         <field name="symbol">C</field>
-        <field name="uom_type">bigger</field>
         <field name="factor" eval="1.0"/>
     </record>
     <record id="product_uom_coulomb_per_kilogram" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">coulomb por kilogramo</field>
         <field name="code">80</field>
         <field name="symbol">C/kg</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_coulomb_per_meter_squared" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">coulomb por metro cuadrado</field>
         <field name="code">75</field>
         <field name="symbol">C/m²</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_coulomb_per_meter_cubed" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">coulomb por metro cúbico</field>
         <field name="code">74</field>
         <field name="symbol">C/m³</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_cajuela_cafe" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_commercial_units"/>
         <field name="name">Cajuela de café</field>
         <field name="code">109</field>
         <field name="symbol">Cc</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_candela" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_luminous"/>
         <field name="name">Candela</field>
         <field name="code">29</field>
         <field name="symbol">Cd</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_candela_per_meter_squared" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_luminous"/>
         <field name="name">candela por metro cuadrado</field>
         <field name="code">39</field>
         <field name="symbol">cd/m²</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_joule" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_energy"/>
         <field name="name">Joule</field>
         <field name="code">46</field>
         <field name="symbol">J</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_electronvolt" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_energy"/>
         <field name="name">electronvolt</field>
         <field name="code">88</field>
         <field name="symbol">eV</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_farad" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">farad</field>
         <field name="code">50</field>
         <field name="symbol">F</field>
-        <field name="uom_type">bigger</field>
     </record>
     <record id="product_uom_farad_per_meter" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_electricity"/>
         <field name="name">farad por metro</field>
         <field name="code">76</field>
         <field name="symbol">F/m</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_gray" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_derived_magnitudes"/>
         <field name="name">gray</field>
         <field name="code">60</field>
         <field name="symbol">Gy</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_gray_per_second" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_derived_magnitudes"/>
         <field name="name">gray por segundo</field>
         <field name="code">81</field>
         <field name="symbol">Gy/s</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_henry" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_derived_magnitudes"/>
         <field name="name">henry</field>
         <field name="code">55</field>
         <field name="symbol">H</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_henry_per_meter" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_derived_magnitudes"/>
         <field name="name">henry por metro</field>
         <field name="code">77</field>
         <field name="symbol">H/m</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_hertz" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_frequency"/>
         <field name="name">hertz</field>
         <field name="code">43</field>
         <field name="symbol">Hz</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_kelvin" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_temperature"/>
         <field name="name">Kelvin</field>
         <field name="code">27</field>
         <field name="symbol">K</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_katal" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_substance_quantity"/>
         <field name="name">katal</field>
         <field name="code">62</field>
         <field name="symbol">Kat</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_katal_per_meter_cubed" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_substance_quantity"/>
         <field name="name">katal por metro cúbico</field>
         <field name="code">84</field>
         <field name="symbol">kat/m³</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_watt" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_power"/>
         <field name="name">Watt</field>
         <field name="code">47</field>
         <field name="symbol">W</field>
-        <field name="uom_type">reference</field>
     </record>
     <record id="product_uom_kilovatios" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_power"/>
         <field name="name">kilovatios</field>
         <field name="code">103</field>
         <field name="symbol">Kw</field>
-        <field name="uom_type">bigger</field>
     </record>
     <record id="product_uom_kilovatios_hora" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_energy"/>
         <field name="name">Kilovatios por hora</field>
         <field name="code">112</field>
         <field name="symbol">kWh</field>
-        <field name="uom_type">smaller</field>
+        <field name="active">True</field>
     </record>
     <record id="product_uom_pascal" model="uom.uom">
-        <field name="category_id" ref="product_uom_categ_pressure"/>
         <field name="name">pascal</field>
         <field name="code">45</field>
         <field name="symbol">Pa</field>
-        <field name="uom_type">reference</field>
     </record>
 
 </odoo>

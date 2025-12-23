@@ -2,7 +2,7 @@
 <odoo>
     <menuitem id="menu_gti_integracion_root"
               name="GTI"
-              groups="gti_integracion.cajero_visualizacion_menu"
+              groups="gti_integracion.cajero_eliminacion"
               sequence="10"/>
 
     <!--region Cajero -->
@@ -21,7 +21,7 @@
     <menuitem id="menu_documento_hacienda_root"
               name="Documentos Hacienda"
               parent="menu_gti_integracion_root"
-              groups="gti_integracion.documento_hacienda_visualizacion_menu"
+              groups="gti_integracion.documento_hacienda_eliminacion"
               sequence="20"/>
 
     <menuitem id="menu_documento_hacienda_sub"

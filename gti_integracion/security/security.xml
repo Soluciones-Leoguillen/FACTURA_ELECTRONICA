@@ -6,31 +6,39 @@
             <field name="name">Cajero</field>
             <field name="sequence">9</field>
         </record>
+        <!--Privilegios-->
+        <record id="cajero_privilegios" model="res.groups.privilege">
+            <field name="name">Privilegios Cajero</field>
+            <field name="category_id" ref="cajero"/>
+        </record>
         <record id="cajero_lectura" model="res.groups">
             <field name="name">Lectura</field>
-            <field name="category_id" ref="cajero"/>
+            <field name="privilege_id" ref="cajero_privilegios"/>
         </record>
         <record id="cajero_escritura" model="res.groups">
             <field name="name">Escritura</field>
-            <field name="category_id" ref="cajero"/>
+            <field name="privilege_id" ref="cajero_privilegios"/>
+            <field name="implied_ids" eval="[(4, ref('cajero_lectura'))]"/>
         </record>
         <record id="cajero_creacion" model="res.groups">
             <field name="name">Creación</field>
-            <field name="category_id" ref="cajero"/>
+            <field name="privilege_id" ref="cajero_privilegios"/>
+            <field name="implied_ids" eval="[(4, ref('cajero_escritura'))]"/>
         </record>
         <record id="cajero_eliminacion" model="res.groups">
             <field name="name">Eliminación</field>
-            <field name="category_id" ref="cajero"/>
+            <field name="privilege_id" ref="cajero_privilegios"/>
+            <field name="implied_ids" eval="[(4, ref('cajero_creacion'))]"/>
         </record>
 
-        <record id="cajero_visualizacion" model="res.groups">
-            <field name="name">Visualizar</field>
-            <field name="category_id" ref="cajero"/>
-        </record>
-        <record id="cajero_visualizacion_menu" model="res.groups">
-            <field name="name">Visualizar Menu</field>
-            <field name="category_id" ref="cajero"/>
-        </record>
+<!--        <record id="cajero_visualizacion" model="res.groups">-->
+<!--            <field name="name">Visualizar</field>-->
+<!--            <field name="privilege_id" ref="cajero_privilegios"/>-->
+<!--        </record>-->
+<!--        <record id="cajero_visualizacion_menu" model="res.groups">-->
+<!--            <field name="name">Visualizar Menu</field>-->
+<!--            <field name="privilege_id" ref="cajero_privilegios"/>-->
+<!--        </record>-->
 
         <!--endregion -->
 
@@ -39,31 +47,38 @@
             <field name="name">Documentos Hacienda</field>
             <field name="sequence">9</field>
         </record>
+        <record id="documento_hacienda_privilegios" model="res.groups.privilege">
+            <field name="name">Documentos Hacienda</field>
+            <field name="category_id" ref="documento_hacienda"/>
+        </record>
         <record id="documento_hacienda_lectura" model="res.groups">
             <field name="name">Lectura</field>
-            <field name="category_id" ref="documento_hacienda"/>
+            <field name="privilege_id" ref="documento_hacienda_privilegios"/>
         </record>
         <record id="documento_hacienda_escritura" model="res.groups">
             <field name="name">Escritura</field>
-            <field name="category_id" ref="documento_hacienda"/>
+            <field name="privilege_id" ref="documento_hacienda_privilegios"/>
+            <field name="implied_ids" eval="[(4, ref('documento_hacienda_lectura'))]"/>
         </record>
         <record id="documento_hacienda_creacion" model="res.groups">
             <field name="name">Creación</field>
-            <field name="category_id" ref="documento_hacienda"/>
+            <field name="privilege_id" ref="documento_hacienda_privilegios"/>
+            <field name="implied_ids" eval="[(4, ref('documento_hacienda_escritura'))]"/>
         </record>
         <record id="documento_hacienda_eliminacion" model="res.groups">
             <field name="name">Eliminación</field>
-            <field name="category_id" ref="documento_hacienda"/>
+            <field name="privilege_id" ref="documento_hacienda_privilegios"/>
+            <field name="implied_ids" eval="[(4, ref('documento_hacienda_creacion'))]"/>
         </record>
 
-        <record id="documento_hacienda_visualizacion" model="res.groups">
-            <field name="name">Visualizar</field>
-            <field name="category_id" ref="documento_hacienda"/>
-        </record>
-        <record id="documento_hacienda_visualizacion_menu" model="res.groups">
-            <field name="name">Visualizar Menu</field>
-            <field name="category_id" ref="documento_hacienda"/>
-        </record>
+<!--        <record id="documento_hacienda_visualizacion" model="res.groups">-->
+<!--            <field name="name">Visualizar</field>-->
+<!--            <field name="privilege_id" ref="documento_hacienda_privilegios"/>-->
+<!--        </record>-->
+<!--        <record id="documento_hacienda_visualizacion_menu" model="res.groups">-->
+<!--            <field name="name">Visualizar Menu</field>-->
+<!--            <field name="privilege_id" ref="documento_hacienda_privilegios"/>-->
+<!--        </record>-->
 
         <!--endregion -->
 

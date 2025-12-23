@@ -1,13 +1,13 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
 access_cajero_lectura,access.cajero,model_cajero,cajero_lectura,1,0,0,0
-access_cajero_escritura,access.cajero,model_cajero,cajero_escritura,0,1,0,0
-access_cajero_ceacion,access.cajero,model_cajero,cajero_creacion,0,0,1,0
-access_cajero_eliminacion,access.cajero,model_cajero,cajero_eliminacion,0,0,0,1
+access_cajero_escritura,access.cajero,model_cajero,cajero_escritura,1,1,0,0
+access_cajero_ceacion,access.cajero,model_cajero,cajero_creacion,1,1,1,0
+access_cajero_eliminacion,access.cajero,model_cajero,cajero_eliminacion,1,1,1,1
 
 access_documento_hacienda_lectura,access.documento.hacienda,model_documento_hacienda,documento_hacienda_lectura,1,0,0,0
-access_documento_hacienda_escritura,access.documento.hacienda,model_documento_hacienda,documento_hacienda_escritura,0,1,0,0
-access_documento_hacienda_ceacion,access.documento.hacienda,model_documento_hacienda,documento_hacienda_creacion,0,0,1,0
-access_documento_hacienda_eliminacion,access.documento.hacienda,model_documento_hacienda,documento_hacienda_eliminacion,0,0,0,1
+access_documento_hacienda_escritura,access.documento.hacienda,model_documento_hacienda,documento_hacienda_escritura,1,1,0,0
+access_documento_hacienda_ceacion,access.documento.hacienda,model_documento_hacienda,documento_hacienda_creacion,1,1,1,0
+access_documento_hacienda_eliminacion,access.documento.hacienda,model_documento_hacienda,documento_hacienda_eliminacion,1,1,1,1
 access_discount_code,access_discount_code,model_discount_code,base.group_user,1,0,0,0
 access_economic_activity,access_economic_activity,model_economic_activity,base.group_user,1,1,1,0

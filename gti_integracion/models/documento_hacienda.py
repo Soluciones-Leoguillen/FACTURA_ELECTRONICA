@@ -480,16 +480,25 @@ class DocumentoHacienda(models.Model):
 
     def crear_receptor(self):
         # Ejemplo de como viene en el campo de Odoo +506 8912 2719, pero debe mandarse como  integer y sin código de país
-        phone = phonenumbers.parse(self.factura.partner_id.phone, (self.factura.partner_id.country_id.code or "CR"))
-        receptor = {
-            "Nombre": self.factura.partner_id.name,
-            "TipoIdent": int(self.factura.partner_id.tipo_Identificacion),
-            "Identificacion": self.factura.partner_id.vat,
-            "AreaTelefono": phone.country_code or 506,
-            "NumTelefono": phone.national_number or 0,
-            "Correo": self.factura.partner_id.email,
-            "Copia": self.factura.partner_id.email_copy
-        }
+        if self.factura.partner_id.phone:
+            phone = phonenumbers.parse(self.factura.partner_id.phone, (self.factura.partner_id.country_id.code or "CR"))
+            receptor = {
+                "Nombre": self.factura.partner_id.name,
+                "TipoIdent": int(self.factura.partner_id.tipo_Identificacion),
+                "Identificacion": self.factura.partner_id.vat,
+                "AreaTelefono": phone.country_code or 506,
+                "NumTelefono": phone.national_number or 0,
+            }
+        else:
+            receptor = {
+                "Nombre": self.factura.partner_id.name,
+                "TipoIdent": int(self.factura.partner_id.tipo_Identificacion),
+                "Identificacion": self.factura.partner_id.vat,
+            }
+        if self.factura.partner_id.email:
+            receptor['Correo'] = self.factura.partner_id.email
+        if self.factura.partner_id.email_copy:
+            receptor['Copia'] = self.factura.partner_id.email_copy
         if self.factura.receiver_economic_activity_id:
             receptor['ActividadEconomica'] = self.factura.receiver_economic_activity_id.code
         return receptor
