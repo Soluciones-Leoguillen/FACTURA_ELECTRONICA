@@ -42,6 +42,7 @@
                 />
                 <field name="receiver_economic_activities_ids" invisible="1"/>
                 <field name="documento_hacienda_id" readonly="1" force_save="1"/>
+                <field name="payment_method"/>
             </xpath>
             <xpath expr="//page[2]" position="after">
                 <page

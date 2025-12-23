@@ -121,6 +121,20 @@ class AccountMove(models.Model):
         string="Descripción Estado FE",
         copy=False,
     )
+    payment_method = fields.Selection(
+        string="Método de pago",
+        selection=[
+            ('1', 'Efectivo'),
+            ('2', 'Tarjeta'),
+            ('3', 'Cheque'),
+            ('4', 'Transferencia o depósito bancario'),
+            ('5', 'Recaudo por terceros'),
+            ('6', 'SINPE Móvil'),
+            ('7', 'Plataforma Digital'),
+            ('99', 'Otros'),
+        ],
+        tracking=True,
+    )
 
 
     @api.depends("partner_id", "company_id")

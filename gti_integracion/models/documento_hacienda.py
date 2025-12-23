@@ -462,7 +462,7 @@ class DocumentoHacienda(models.Model):
                         "Moneda": self.factura.currency_id.code if self.factura.currency_id.code else 1,
                         "CondicionVenta": "01",
                         "MedioPagos": [{
-                            "TipoMedioPago": 4,
+                            "TipoMedioPago": self.factura.payment_method if self.factura.payment_method else 4,
                         }],
                     }
                 }
