@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="envio_gti" invisible="1"/>
-                <field name="tipoVenta" widget="badge"/>
-                <field name="plazoVenta" widget="badge"/>
+<!--                <field name="tipoVenta" widget="badge"/>-->
+<!--                <field name="plazoVenta" widget="badge"/>-->
             </xpath>
             <xpath expr="//header" position="inside">
                 <button name="enviar_factura" string="Enviar a GTI" class="btn-primary" type="object" invisible="move_type not in ('out_invoice','out_refund') or clave_documento or state != 'posted'" confirm="¿Está seguro de enviar la factura a GTI?"/>
@@ -16,6 +16,9 @@
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']//list//field[@name='discount']" position="after">
                 <field name="discount_code_id" optional="show" required="discount != 0 and parent.move_type in ('out_invoice','out_refund','out_receipt')"/>
+            </xpath>
+            <xpath expr="//label[@for='invoice_date']" position="before">
+                <field name="tipo_documento" readonly="state != 'draft'"/>
             </xpath>
             <xpath expr="//field[@name='partner_shipping_id']" position="before">
                 <field
@@ -42,7 +45,7 @@
                 />
                 <field name="receiver_economic_activities_ids" invisible="1"/>
                 <field name="documento_hacienda_id" readonly="1" force_save="1"/>
-                <field name="payment_method"/>
+                <field name="payment_method" readonly="state != 'draft'"/>
             </xpath>
             <xpath expr="//page[2]" position="after">
                 <page

@@ -58,13 +58,16 @@ class DocumentoHacienda(models.Model):
     tipo = fields.Selection(
         string="Tipo",
         selection=[
-            ('1', 'Factura electrónica'),
-            ('2', 'Nota de débito electrónicaia'),
-            ('3', 'Nota de crédito electrónica'),
-            ('4', 'Tiquete electrónico'),
-            ('8', 'Factura electrónica de compra'),
-            ('9', 'Factura electrónica de exportación'),
-
+            ("1", "Factura Electrónica"),
+            ("2", "Nota de Débito Electrónica"),
+            ("3", "Nota de Crédito Electrónica"),
+            ("4", "Tiquete Electrónico"),
+            ("5", "Confirmación de Aceptación del Comprobante Electrónico"),
+            ("6", "Confirmación de Aceptación Parcial del Comprobante Electrónico"),
+            ("7", "Confirmación de Rechazo del Comprobante Electrónico"),
+            ("8", "Factura Electrónica de Compra"),
+            ("9", "Factura Electrónica de Exportación"),
+            ("10", "Recibo Electrónico de Pago"),
         ],
         required=True,
         tracking=True,
@@ -365,13 +368,10 @@ class DocumentoHacienda(models.Model):
     def crear_factura(self):
         if self.codigo != '0':
             factura = self.crear_encabezado()
-
+            # if self.factura.tipo_documento != '4':
             factura['Documentos'][0]['Encabezado']['Receptor'] = self.crear_receptor()
-
             factura['Documentos'][0]['Lineas'] = self.crear_lineas()
-
             factura['Documentos'][0]['Totales'] = self.crear_totales()
-
             factura['Documentos'][0]['Otros'] = {
                 "Notas": text_from_html(self.factura.narration) if self.factura.narration else "Sin Notas"
             }
@@ -418,7 +418,7 @@ class DocumentoHacienda(models.Model):
             if request[0]['Codigo'] == 0:
                 self.consecutivo = str(request[0]['Consecutivo'])
                 self.clave = str(request[0]['ClaveNumerica'])
-                if self.tipo == '1':
+                if self.tipo in ['1', '4']:
                     self.factura.clave_documento = str(request[0]['ClaveNumerica'])
                     self.factura.consecutivo = str(request[0]['Consecutivo'])
                 elif self.tipo == '3':

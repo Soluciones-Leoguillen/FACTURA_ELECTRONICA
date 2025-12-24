@@ -135,7 +135,35 @@ class AccountMove(models.Model):
         ],
         tracking=True,
     )
+    tipo_documento = fields.Selection(
+        selection=[
+            ("1", "Factura Electrónica"),
+            # ("2", "Nota de Débito Electrónica"),
+            ("3", "Nota de Crédito Electrónica"),
+            ("4", "Tiquete Electrónico"),
+            # ("5", "Confirmación de Aceptación del Comprobante Electrónico"),
+            # ("6", "Confirmación de Aceptación Parcial del Comprobante Electrónico"),
+            # ("7", "Confirmación de Rechazo del Comprobante Electrónico"),
+            # ("8", "Factura Electrónica de Compra"),
+            # ("9", "Factura Electrónica de Exportación"),
+            # ("10", "Recibo Electrónico de Pago"),
+        ],
+        string="Tipo de Documento",
+        default=lambda self: '1' if (self._context.get('move_type') == 'out_invoice' or self._context.get('default_move_type') == 'out_invoice') else False
+    )
 
+    @api.onchange('tipo_documento')
+    def _onchange_tipo_documento(self):
+        for rec in self:
+            move_type = rec.move_type or rec._context.get('move_type') or rec._context.get('default_move_type') or False
+            if rec.tipo_documento == '3' and move_type == 'out_invoice':
+                raise ValidationError("El tipo de documento no coincide con el documento que se está creando.")
+
+    @api.onchange('move_type')
+    def _onchange_move_type(self):
+        for rec in self:
+            if rec.move_type == 'out_invoice':
+                rec.tipo_documento = '1'
 
     @api.depends("partner_id", "company_id")
     def _compute_economic_activities(self):
@@ -165,7 +193,9 @@ class AccountMove(models.Model):
                 raise ValidationError("La compañía no tiene clave")
             if not data.company_id.gti_url:
                 raise ValidationError("El ambiente de la compañía está en 'Deshabilitado'")
-            #cabys
+            if not data.tipo_documento:
+                raise ValidationError("El tipo de documento no está establecido")
+            # cabys
             for line in data.invoice_line_ids:
                 if not line.product_id.cabys:
                     raise ValidationError(f"El producto {line.product_id.name} no tiene código CABYS")
@@ -175,10 +205,10 @@ class AccountMove(models.Model):
                     if not tax.codigo_Imp:
                         raise ValidationError(f"El impuesto {tax.name} no tiene código de tarifa")
             if data.move_type in ('out_invoice', 'out_refund') and data.envio_gti == 'Enviar a GTI':
-                if not data.reversed_entry_id:
+                if not data.reversed_entry_id:  # TODO cambiar a uso de tipo_documento en los if
                     vals = {
                         "name": data.name,
-                        "tipo": "1",
+                        "tipo": data.tipo_documento,
                         "codigo": "1",
                         "factura": data.id,
                         "company_id": data.company_id.id,
@@ -186,7 +216,7 @@ class AccountMove(models.Model):
                 else:
                     vals = {
                         "name": data.name,
-                        "tipo": "3",
+                        "tipo": data.tipo_documento,
                         "codigo": "1",
                         "factura_NC": data.id,
                         "factura": data.reversed_entry_id.id,
@@ -237,10 +267,12 @@ class AccountMove(models.Model):
         response = requests.post(url, params=params, timeout=30)
         if response.status_code == 200:
             xml_content = response.content
-            if self.move_type == 'out_invoice':
+            if self.tipo_documento == '1':
                 type = 'FE'
-            elif self.move_type == 'out_refund':
+            elif self.tipo_documento == '3':
                 type = 'NC'
+            elif self.tipo_documento == '4':
+                type = 'TE'
             else:
                 type = 'DOC'
             self.write({
