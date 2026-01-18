@@ -371,7 +371,7 @@ class DocumentoHacienda(models.Model):
             # if self.factura.tipo_documento != '4':
             factura['Documentos'][0]['Encabezado']['Receptor'] = self.crear_receptor()
             factura['Documentos'][0]['Lineas'] = self.crear_lineas()
-            factura['Documentos'][0]['Totales'] = self.crear_totales()
+            factura['Documentos'][0]['Totales'] = self.crear_totales(factura['Documentos'][0]['Lineas'])
             factura['Documentos'][0]['Otros'] = {
                 "Notas": text_from_html(self.factura.narration) if self.factura.narration else "Sin Notas"
             }
@@ -388,7 +388,7 @@ class DocumentoHacienda(models.Model):
 
             factura['Documentos'][0]['Referencia'] = self.crear_referencia()
 
-            factura['Documentos'][0]['Totales'] = self.crear_totales()
+            factura['Documentos'][0]['Totales'] = self.crear_totales(factura['Documentos'][0]['Lineas'])
 
             factura['Documentos'][0]['Otros'] = {
                 "Notas": "Factura de Referencia " + text_from_html(self.factura_NC.narration) if self.factura_NC.narration else "Sin Notas"
@@ -429,7 +429,7 @@ class DocumentoHacienda(models.Model):
             else:
                 self.codigo = str(request[0]['Codigo'])
             msg = dict(self.fields_get(allfields=['codigo'])['codigo']['selection'])[self.codigo]
-            if self.tipo == '1':
+            if self.tipo in ['1', '4']:
                 self.factura.message_post(body=_('Respuesta de GTI: %s - %s' % (self.codigo, msg)))
                 _logger.info('Respuesta de GTI: %s - %s JSON: %s' % (self.codigo, msg, json.dumps(factura)))
             elif self.tipo == '3':
@@ -532,16 +532,19 @@ class DocumentoHacienda(models.Model):
                     "DetalleDescuento": "Se aplica descuento.",
                 }]
             if line.tax_ids:
+                monto_impuesto = round(((line.price_unit * line.quantity) * (1 if line.discount >= 100 else (1 - (line.discount / 100.0)))) * (line.tax_ids.amount / 100.0), 5)
                 general['Impuestos'] = [{
                     "CodigoImp": 1,
                     "PorcentajeImp": round(line.tax_ids.amount, 5),
                     "CodigoTarifa": int(line.tax_ids.codigo_Imp),
-                    "MontoImp": round(((line.price_unit * line.quantity) - (line.price_unit * line.quantity * (line.discount / 100))) * (line.tax_ids.amount / 100), 5),
-                }]
+                    "MontoImp": monto_impuesto,
+                    }]
+                if line.discount_code_id.code in ("01", "03"):
+                    general['ImpuestoAsumidoEmisorFabrica'] = monto_impuesto
             lineas.append(general)
         return lineas
 
-    def crear_totales(self):
+    def crear_totales(self, lineas):
         service = ['5', '6', '7', '8', '9']
         # Filtrar líneas válidas
         lineas_validas = self.factura.invoice_line_ids.filtered(
@@ -606,6 +609,11 @@ class DocumentoHacienda(models.Model):
             "TotalImpuesto": total_impuesto,
             "TotalComprobante": round(total_venta_neta + total_impuesto, 5),
         }
+        total_impuesto_asumido_fabrica = 0.0
+        for l in lineas:
+            if l.get('ImpuestoAsumidoEmisorFabrica'):
+                total_impuesto_asumido_fabrica += l['ImpuestoAsumidoEmisorFabrica']
+        totales['TotalImpuestoAsumidoFabrica'] = round(total_impuesto_asumido_fabrica, 5)
         return totales
 
     def crear_referencia(self):

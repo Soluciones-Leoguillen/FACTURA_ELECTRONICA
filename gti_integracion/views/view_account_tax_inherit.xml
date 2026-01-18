@@ -8,6 +8,12 @@
             <xpath expr="//field[@name='tax_scope']" position="after">
                 <field name="codigo_Imp"/>
             </xpath>
+            <xpath expr="//label[@for='amount']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+            <xpath expr="//div" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
