@@ -528,18 +528,22 @@ class DocumentoHacienda(models.Model):
                 monto_descuento = subtotal_linea * (line.discount / 100)
                 general['Descuentos'] = [{
                     "MontoDescuento": round(monto_descuento, 5),
-                    "CodigoDescuento": line.discount_code_id.code if line.discount_code_id else '07',
+                    "CodigoDescuento": line.discount_code_id.code if line.discount_code_id else '7',
                     "DetalleDescuento": "Se aplica descuento.",
                 }]
+            if line.discount_code_id and line.discount_code_id.code in ("1", "3"):
+                general['BaseImponible'] = round((line.price_unit * line.quantity) - ((line.price_unit * line.quantity) * (line.discount / 100.0)), 5)
+            else:
+                general['BaseImponible'] = round(line.price_unit * line.quantity, 5)
             if line.tax_ids:
                 monto_impuesto = round(((line.price_unit * line.quantity) * (1 if line.discount >= 100 else (1 - (line.discount / 100.0)))) * (line.tax_ids.amount / 100.0), 5)
                 general['Impuestos'] = [{
-                    "CodigoImp": 1,
+                    "CodigoImp": int(line.tax_ids.tax_code) if line.tax_ids.tax_code else 1,
                     "PorcentajeImp": round(line.tax_ids.amount, 5),
                     "CodigoTarifa": int(line.tax_ids.codigo_Imp),
                     "MontoImp": monto_impuesto,
                     }]
-                if line.discount_code_id.code in ("01", "03"):
+                if line.discount_code_id.code in ("1", "3"):
                     general['ImpuestoAsumidoEmisorFabrica'] = monto_impuesto
             lineas.append(general)
         return lineas
@@ -556,7 +560,7 @@ class DocumentoHacienda(models.Model):
             for line in lineas_validas
         ), 5)
         total_impuesto = round(sum(
-            ((line.price_unit * line.quantity) - (line.price_unit * line.quantity * (line.discount / 100))) * (line.tax_ids.amount / 100)
+            round(((line.price_unit * line.quantity) * (1 if line.discount >= 100 else (1 - (line.discount / 100.0)))) * (line.tax_ids.amount / 100.0), 5)
             for line in lineas_validas.filtered(lambda x: x.tax_ids)
         ), 5)
         totales = {
@@ -595,8 +599,8 @@ class DocumentoHacienda(models.Model):
                 for line in lineas_validas.filtered(lambda x: not x.tax_ids)
             ), 5),
             "TotalExonerado": 0.0,
-            "TotalIVADevuelto": 0.0,
             "TotalOtrosCargos": 0.0,
+            "TotalIVADevuelto": 0.0,
             "TotalVenta": round(sum(
                 line.price_unit * line.quantity
                 for line in lineas_validas
@@ -606,14 +610,24 @@ class DocumentoHacienda(models.Model):
                 for line in lineas_validas
             ), 5),
             "TotalVentaNeta": total_venta_neta,
-            "TotalImpuesto": total_impuesto,
-            "TotalComprobante": round(total_venta_neta + total_impuesto, 5),
+            # "TotalImpuesto": total_impuesto,
+            # "TotalComprobante": round(total_venta_neta + total_impuesto, 5),
         }
         total_impuesto_asumido_fabrica = 0.0
+        total_impuesto = 0.0
         for l in lineas:
             if l.get('ImpuestoAsumidoEmisorFabrica'):
                 total_impuesto_asumido_fabrica += l['ImpuestoAsumidoEmisorFabrica']
+            if l.get('Impuestos'):
+                if not l.get('Descuentos'):
+                    for imp in l['Impuestos']:
+                        total_impuesto += imp['MontoImp']
+                elif l.get('Descuentos') and l['Descuentos'][0]['CodigoDescuento'] not in ("1", "3"):
+                    for imp in l['Impuestos']:
+                        total_impuesto += imp['MontoImp']
+        totales['TotalImpuesto'] = round(total_impuesto, 5)
         totales['TotalImpuestoAsumidoFabrica'] = round(total_impuesto_asumido_fabrica, 5)
+        totales['TotalComprobante'] = round(total_venta_neta + total_impuesto, 5)
         return totales
 
     def crear_referencia(self):
