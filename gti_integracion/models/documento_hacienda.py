@@ -381,19 +381,13 @@ class DocumentoHacienda(models.Model):
     def crear_nota_credito(self):
         if self.codigo != '0':
             factura = self.crear_encabezado()
-
             factura['Documentos'][0]['Encabezado']['Receptor'] = self.crear_receptor()
-
             factura['Documentos'][0]['Lineas'] = self.crear_lineas()
-
             factura['Documentos'][0]['Referencia'] = self.crear_referencia()
-
             factura['Documentos'][0]['Totales'] = self.crear_totales(factura['Documentos'][0]['Lineas'])
-
             factura['Documentos'][0]['Otros'] = {
                 "Notas": "Factura de Referencia " + text_from_html(self.factura_NC.narration) if self.factura_NC.narration else "Sin Notas"
             }
-
             self.enviar_documento(factura)
 
     def enviar_documento(self, factura):
