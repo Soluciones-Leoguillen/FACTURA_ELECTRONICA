@@ -434,7 +434,7 @@ class DocumentoHacienda(models.Model):
 
     def crear_encabezado(self):
         user_tz = pytz.timezone(self.env.company.tz if self.env.company.tz else 'America/Costa_Rica')
-        fechaActual = pytz.utc.localize(datetime.today()).astimezone(user_tz)
+        fechaActual = pytz.utc.localize(datetime.today()).astimezone(user_tz) #
 
         self.fecha_Emsion = datetime.now()
         cajero = self.env['cajero'].sudo().search([('empleadoAsignado', '=', self.env.user.id)])
