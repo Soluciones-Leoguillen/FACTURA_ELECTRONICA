@@ -449,7 +449,7 @@ class DocumentoHacienda(models.Model):
                         # "FechaFactura": fechaActual.strftime("%Y-%m-%dT%H:%M:%S"),
                         "TipoDoc": int(self.tipo),
                         "SituacionEnvio": 1,
-                        "CantDeci": 5,
+                        "CantDeci": 2,
                         "Sucursal": cajero.sucursal,
                         "CodigoActividad": self.factura.economic_activity_id.code,
                         "Terminal": int(cajero.terminal),
@@ -463,7 +463,7 @@ class DocumentoHacienda(models.Model):
             ]
         }
         if self.factura.currency_id.name != 'CRC' and self.factura.invoice_currency_rate > 0:
-            factura['Documentos'][0]['Encabezado']['TipoCambio'] = round(1 / self.factura.invoice_currency_rate, 5)
+            factura['Documentos'][0]['Encabezado']['TipoCambio'] = round(1 / self.factura.invoice_currency_rate, 2)
         if self.factura.tipoVenta == "2":
             factura['Documentos'][0]['Encabezado']['CondicionVenta'] = int(self.factura.tipoVenta)
             factura['Documentos'][0]['Encabezado']['PlazoCredito'] = int(self.factura.plazoVenta)
@@ -512,7 +512,7 @@ class DocumentoHacienda(models.Model):
                 ],
                 "UnidadMedida": int(line.product_uom_id.code) if line.product_uom_id.code else 1,
                 "Descripcion":  str(line.product_id.product_tmpl_id.display_name),
-                "PrecioUnitario": round(line.price_unit,5),
+                "PrecioUnitario": round(line.price_unit,2),
                 "CodProdServ": [line.product_id.product_tmpl_id.name],
                 "Codigo": line.product_id.cabys if line.product_id.cabys else line.product_id.product_tmpl_id.cabys  ,
 
@@ -521,19 +521,19 @@ class DocumentoHacienda(models.Model):
                 subtotal_linea = line.price_unit * line.quantity
                 monto_descuento = subtotal_linea * (line.discount / 100)
                 general['Descuentos'] = [{
-                    "MontoDescuento": round(monto_descuento, 5),
+                    "MontoDescuento": round(monto_descuento, 2),
                     "CodigoDescuento": line.discount_code_id.code if line.discount_code_id else '7',
                     "DetalleDescuento": "Se aplica descuento.",
                 }]
             if line.discount_code_id and line.discount_code_id.code in ("1", "3"):
-                general['BaseImponible'] = round((line.price_unit * line.quantity) - ((line.price_unit * line.quantity) * (line.discount / 100.0)), 5)
+                general['BaseImponible'] = round((line.price_unit * line.quantity) - ((line.price_unit * line.quantity) * (line.discount / 100.0)), 2)
             else:
-                general['BaseImponible'] = round(line.price_unit * line.quantity, 5)
+                general['BaseImponible'] = round(line.price_unit * line.quantity, 2)
             if line.tax_ids:
-                monto_impuesto = round(((line.price_unit * line.quantity) * (1 if line.discount >= 100 else (1 - (line.discount / 100.0)))) * (line.tax_ids.amount / 100.0), 5)
+                monto_impuesto = round(((line.price_unit * line.quantity) * (1 if line.discount >= 100 else (1 - (line.discount / 100.0)))) * (line.tax_ids.amount / 100.0), 2)
                 general['Impuestos'] = [{
                     "CodigoImp": int(line.tax_ids.tax_code) if line.tax_ids.tax_code else 1,
-                    "PorcentajeImp": round(line.tax_ids.amount, 5),
+                    "PorcentajeImp": round(line.tax_ids.amount, 2),
                     "CodigoTarifa": int(line.tax_ids.codigo_Imp),
                     "MontoImp": monto_impuesto,
                     }]
@@ -552,18 +552,18 @@ class DocumentoHacienda(models.Model):
         total_venta_neta = round(sum(
             line.price_subtotal
             for line in lineas_validas
-        ), 5)
+        ), 2)
         total_impuesto = round(sum(
-            round(((line.price_unit * line.quantity) * (1 if line.discount >= 100 else (1 - (line.discount / 100.0)))) * (line.tax_ids.amount / 100.0), 5)
+            round(((line.price_unit * line.quantity) * (1 if line.discount >= 100 else (1 - (line.discount / 100.0)))) * (line.tax_ids.amount / 100.0), 2)
             for line in lineas_validas.filtered(lambda x: x.tax_ids)
-        ), 5)
+        ), 2)
         totales = {
             "TotalServGravado": round(sum(
                 line.price_unit * line.quantity
                 for line in lineas_validas.filtered(
                     lambda x: x.product_id.cabys and str(x.product_id.cabys)[0] in service and x.tax_ids
                 )
-            ), 5),
+            ), 2),
             "TotalServExento": round(sum(
                 line.price_unit * line.quantity
                 for line in lineas_validas.filtered(
@@ -576,33 +576,33 @@ class DocumentoHacienda(models.Model):
                 for line in lineas_validas.filtered(
                     lambda x: (not x.product_id.cabys or str(x.product_id.cabys)[0] not in service) and x.tax_ids
                 )
-            ), 5),
+            ), 2),
             "TotalMercaExenta": round(sum(
                 line.price_unit * line.quantity
                 for line in lineas_validas.filtered(
                     lambda x: (not x.product_id.cabys or str(x.product_id.cabys)[0] not in service) and not x.tax_ids
                 )
-            ), 5),
+            ), 2),
             "TotalMercaExonerada": 0.0,
             "TotalGravado": round(sum(
                 line.price_unit * line.quantity
                 for line in lineas_validas.filtered(lambda x: x.tax_ids)
-            ), 5),
+            ), 2),
             "TotalExento": round(sum(
                 line.price_unit * line.quantity
                 for line in lineas_validas.filtered(lambda x: not x.tax_ids)
-            ), 5),
+            ), 2),
             "TotalExonerado": 0.0,
             "TotalOtrosCargos": 0.0,
             "TotalIVADevuelto": 0.0,
             "TotalVenta": round(sum(
                 line.price_unit * line.quantity
                 for line in lineas_validas
-            ), 5),
+            ), 2),
             "TotalDescuento": round(sum(
                 (line.price_unit * line.quantity) * (line.discount / 100)
                 for line in lineas_validas
-            ), 5),
+            ), 2),
             "TotalVentaNeta": total_venta_neta,
             # "TotalImpuesto": total_impuesto,
             # "TotalComprobante": round(total_venta_neta + total_impuesto, 5),
@@ -619,9 +619,9 @@ class DocumentoHacienda(models.Model):
                 elif l.get('Descuentos') and l['Descuentos'][0]['CodigoDescuento'] not in ("1", "3"):
                     for imp in l['Impuestos']:
                         total_impuesto += imp['MontoImp']
-        totales['TotalImpuesto'] = round(total_impuesto, 5)
-        totales['TotalImpuestoAsumidoFabrica'] = round(total_impuesto_asumido_fabrica, 5)
-        totales['TotalComprobante'] = round(total_venta_neta + total_impuesto, 5)
+        totales['TotalImpuesto'] = round(total_impuesto, 2)
+        totales['TotalImpuestoAsumidoFabrica'] = round(total_impuesto_asumido_fabrica, 2)
+        totales['TotalComprobante'] = round(total_venta_neta + total_impuesto, 2)
         return totales
 
     def crear_referencia(self):
