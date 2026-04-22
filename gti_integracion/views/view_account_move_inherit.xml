@@ -1,68 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- ═══════════════════════════════════════════════════════════════
+         Herencia del formulario de factura — v2.0
+         ═══════════════════════════════════════════════════════════════ -->
     <record id="clave_electronica_account_move_form_inherit" model="ir.ui.view">
         <field name="name">account.move.inherited</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
+
+            <!-- ═══ Campos ocultos para condicionales ═══ -->
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="envio_gti" invisible="1"/>
                 <field name="tipoVenta" widget="badge"/>
                 <field name="plazoVenta" widget="badge"/>
             </xpath>
+
+            <!-- ═══ BOTONES GTI EN HEADER ═══ -->
             <xpath expr="//header" position="inside">
-                <button name="enviar_factura" string="Enviar a GTI" class="btn-primary" type="object" invisible="move_type not in ('out_invoice','out_refund') or clave_documento or state != 'posted'" confirm="¿Está seguro de enviar la factura a GTI?"/>
-                <button name="action_check_document" string="Consultar Documento" class="btn-primary" type="object" invisible="move_type not in ('out_invoice','out_refund') or gti_document_state or not clave_documento"/>
+                <!-- Enviar a GTI (primera vez) -->
+                <button name="enviar_factura" string="Enviar a GTI"
+                        class="btn-primary" type="object"
+                        invisible="move_type not in ('out_invoice','out_refund') or clave_documento or state != 'posted'"
+                        confirm="¿Está seguro de enviar la factura a GTI?"/>
+                <!-- v2.0: Re-enviar cuando hay error -->
+                <button name="enviar_factura" string="⟳ Re-enviar a GTI"
+                        class="btn-warning" type="object"
+                        invisible="move_type not in ('out_invoice','out_refund') or not documento_hacienda_id or gti_document_state in ('100',) or state != 'posted' or not clave_documento"
+                        confirm="¿Re-enviar la factura a GTI?"/>
+                <!-- Consultar estado -->
+                <button name="action_check_document" string="Consultar Estado"
+                        class="btn-info" type="object"
+                        invisible="move_type not in ('out_invoice','out_refund') or not consecutivo"/>
+                <!-- v2.0: Descargar PDF -->
+                <button name="action_download_pdf_fe" string="⤓ PDF"
+                        class="btn-secondary" type="object"
+                        invisible="not consecutivo"
+                        help="Descargar PDF de Hacienda"/>
             </xpath>
-            <xpath expr="//field[@name='invoice_line_ids']//list//field[@name='discount']" position="after">
-                <field name="discount_code_id" optional="show" required="discount != 0 and parent.move_type in ('out_invoice','out_refund','out_receipt')"/>
-            </xpath>
+
+            <!-- ═══ Campos de condiciones de venta ═══ -->
             <xpath expr="//field[@name='partner_shipping_id']" position="before">
-                <field
-                    name="economic_activity_id"
-                    required="move_type != 'entry' "
-                    invisible="move_type == 'entry'"
-                    domain="[('id', 'in', economic_activities_ids),]"
-                    options='{"no_open": True, "no_create": True, "active_test": [("type","in", ("in_invoice", "in_refund"))]}'
-                    readonly="state != 'draft'"
-                />
-                <field
-                    name="economic_activities_ids"
-                    invisible="1"
-                    readonly="1"
-                    options='{"active_test": [("type","in", ("in_invoice", "in_refund"))]}'
-                />
-                <field
-                    name="receiver_economic_activity_id"
-                    invisible="move_type not in ('out_invoice','out_refund')"
-                    domain="[('id', 'in', receiver_economic_activities_ids),]"
-                    options='{"no_open": True, "no_create": True}'
-                    context="{'active_test': False}"
-                    readonly="state != 'draft'"
-                />
+                <field name="economic_activity_id"
+                       required="move_type != 'entry'"
+                       invisible="move_type == 'entry'"
+                       domain="[('id', 'in', economic_activities_ids)]"
+                       options='{"no_open": True, "no_create": True}'
+                       readonly="state != 'draft'"/>
+                <field name="economic_activities_ids" invisible="1" readonly="1"/>
+                <field name="receiver_economic_activity_id"
+                       invisible="move_type not in ('out_invoice','out_refund')"
+                       domain="[('id', 'in', receiver_economic_activities_ids)]"
+                       options='{"no_open": True, "no_create": True}'
+                       context="{'active_test': False}"
+                       readonly="state != 'draft'"/>
                 <field name="receiver_economic_activities_ids" invisible="1"/>
                 <field name="documento_hacienda_id" readonly="1" force_save="1"/>
             </xpath>
+
+            <!-- ═══ Descuento en líneas ═══ -->
+            <xpath expr="//field[@name='invoice_line_ids']//list//field[@name='discount']" position="after">
+                <field name="discount_code_id" optional="show"
+                       required="discount != 0 and parent.move_type in ('out_invoice','out_refund','out_receipt')"/>
+            </xpath>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 v2.0: BANNERS DE ESTADO — antes del notebook
+                 ═══════════════════════════════════════════════════════ -->
+            <xpath expr="//notebook" position="before">
+                <!-- 🟢 ACEPTADA por Hacienda -->
+                <div class="alert alert-success py-2 mb-2" role="alert"
+                     invisible="gti_document_state != '100' or move_type not in ('out_invoice','out_refund')">
+                    <strong>✓ Factura Electrónica ACEPTADA por Hacienda</strong>
+                    — Consecutivo: <field name="consecutivo" readonly="1" nolabel="1" class="fw-bold"
+                                          style="display:inline;"/>
+                </div>
+
+                <!-- 🔵 PROCESANDO -->
+                <div class="alert alert-info py-2 mb-2" role="alert"
+                     invisible="gti_document_state not in ('101','105','106','108') or move_type not in ('out_invoice','out_refund')">
+                    <strong>⏳ Documento en proceso — Esperando respuesta de Hacienda</strong>
+                    <span class="ms-3">
+                        <button name="action_check_document" type="object"
+                                string="Consultar Estado" class="btn btn-sm btn-outline-info"/>
+                    </span>
+                </div>
+
+                <!-- 🔴 RECHAZADA / ERROR -->
+                <div class="alert alert-danger py-2 mb-2" role="alert"
+                     invisible="gti_document_state not in ('102','103','104','107') or move_type not in ('out_invoice','out_refund')">
+                    <strong>⚠ Error en Factura Electrónica</strong> —
+                    <field name="gti_document_state_description" readonly="1" nolabel="1"
+                           style="display:inline;"/>
+                    <span class="ms-3">
+                        <button name="enviar_factura" type="object"
+                                string="⟳ Re-enviar" class="btn btn-sm btn-outline-danger"
+                                confirm="¿Re-enviar la factura a GTI?"/>
+                    </span>
+                </div>
+            </xpath>
+
+            <!-- ═══ TAB FACTURACIÓN ELECTRÓNICA ═══ -->
             <xpath expr="//page[2]" position="after">
-                <page
-                    name="fe_invoice_data"
-                    string="Facturación Electrónica"
-                    invisible="move_type not in ('out_invoice', 'out_refund')">
+                <page name="fe_invoice_data" string="Facturación Electrónica"
+                      invisible="move_type not in ('out_invoice', 'out_refund')">
                     <group name="fe_info_group">
                         <group string="Información FE" name="fe_info">
                             <field name="clave_documento" readonly="1" force_save="1"/>
                             <field name="consecutivo" readonly="1" force_save="1"/>
+                            <field name="gti_document_state" readonly="1" widget="badge"
+                                   decoration-success="gti_document_state == '100'"
+                                   decoration-danger="gti_document_state in ('102','103','104')"
+                                   decoration-info="gti_document_state in ('101','105','106','108')"/>
+                            <field name="gti_document_state_description" readonly="1"/>
                         </group>
                         <group string="Documentos electrónicos" name="fe_electronic_docs">
                             <field name="fname_xml_document" invisible="1" readonly="1"/>
                             <field name="xml_document" filename="fname_xml_document" readonly="1" force_save="1"/>
                             <field name="fname_xml_response" invisible="1" readonly="1"/>
                             <field name="xml_response" filename="fname_xml_response" readonly="1" force_save="1"/>
-                            <field name="gti_document_state" readonly="1"/>
-                            <field name="gti_document_state_description" readonly="1"/>
                         </group>
                     </group>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         v2.0: Estado FE en lista de facturas
+         ═══════════════════════════════════════════════════════════════ -->
+    <record id="account_move_gti_list_inherit" model="ir.ui.view">
+        <field name="name">account.move.gti.list</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="gti_document_state" string="Estado FE" optional="show"
+                       widget="badge"
+                       decoration-success="gti_document_state == '100'"
+                       decoration-danger="gti_document_state in ('102','103','104')"
+                       decoration-info="gti_document_state in ('101','105','106','108')"/>
+                <field name="consecutivo" string="Nº FE" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         v2.0: Filtros FE en búsqueda
+         ═══════════════════════════════════════════════════════════════ -->
+    <record id="account_move_gti_search_inherit" model="ir.ui.view">
+        <field name="name">account.move.gti.search</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_move_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="gti_accepted" string="FE Aceptada"
+                        domain="[('gti_document_state','=','100')]"/>
+                <filter name="gti_pending" string="FE Pendiente"
+                        domain="[('gti_document_state','in',('101','105','106','108'))]"/>
+                <filter name="gti_error" string="FE con Error"
+                        domain="[('gti_document_state','in',('102','103','104','107'))]"/>
+                <filter name="gti_not_sent" string="FE No Enviada"
+                        domain="[('gti_document_state','=',False),('consecutivo','=',False),('state','=','posted'),('move_type','in',('out_invoice','out_refund'))]"/>
             </xpath>
         </field>
     </record>

@@ -1,11 +1,28 @@
 {
     'name': 'Integración GTI',
-    'version': '1.0',
+    'version': '2.0',
     'category': 'Facturación Electrónica',
-    'summary': 'Manejo de Facturación',
+    'summary': 'Facturación Electrónica Costa Rica — GTI API v4.4',
     'sequence': -100,
-    'description': "",
-    'author': 'Greivin Gamboa Flores',
+    'description': """
+Integración GTI v2.0 — Facturación Electrónica Costa Rica
+==========================================================
+Mejoras v2.0:
+- Redondeo GTI HALF_UP (corrige errores en USD con decimales)
+- Totales calculados desde líneas redondeadas (evita error 61/62)
+- TotalImpVenta + TotalImpOtros separados
+- Descarga PDF de Hacienda + adjunta al chatter
+- NC parciales (por líneas, no solo total)
+- Banners de estado FE en factura
+- Estado FE en lista de facturas con filtros
+- Errores detallados en chatter
+- Botón re-enviar en caso de error
+- EsVersion4_4 en JSON
+- CABYS servicios corregido (7,8,9)
+
+Autor: Leo Guillen - odoo@leoguillen.com
+    """,
+    'author': 'Leo Guillen',
     'website': 'http://leoguillen.com',
     'license': 'LGPL-3',
     'depends': [

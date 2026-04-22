@@ -135,6 +135,7 @@ class AccountMove(models.Model):
                 inv.economic_activities_ids = False
 
     def enviar_factura(self):
+        """v2.0: Enviar a GTI con soporte para re-envío en caso de error."""
         for data in self:
             # validaciones
             if not data.partner_id.vat:
@@ -151,15 +152,15 @@ class AccountMove(models.Model):
                 raise ValidationError("La compañía no tiene clave")
             if not data.company_id.gti_url:
                 raise ValidationError("El ambiente de la compañía está en 'Deshabilitado'")
-            #cabys
-            for line in data.invoice_line_ids:
+            # cabys - solo validar líneas con producto
+            for line in data.invoice_line_ids.filtered(
+                lambda l: l.display_type not in ('line_note', 'line_section')
+                and l.product_id
+            ):
                 if not line.product_id.cabys:
-                    raise ValidationError(f"El producto {line.product_id.name} no tiene código CABYS")
-                if not line.tax_ids:
-                    raise ValidationError(f"La línea {line.name} no tiene impuestos")
-                for tax in line.tax_ids:
-                    if not tax.codigo_Imp:
-                        raise ValidationError(f"El impuesto {tax.name} no tiene código de tarifa")
+                    raise ValidationError(
+                        f"El producto {line.product_id.name} no tiene código CABYS"
+                    )
             if data.move_type in ('out_invoice', 'out_refund') and data.envio_gti == 'Enviar a GTI':
                 if not data.reversed_entry_id:
                     vals = {
@@ -182,16 +183,24 @@ class AccountMove(models.Model):
                 if not data.documento_hacienda_id:
                     res = self.env['documento.hacienda'].sudo().create(vals)
                     data.documento_hacienda_id = res.id
-
-                    if not data.reversed_entry_id:
-                        res.crear_factura()
-                    else:
-                        res.crear_nota_credito()
                 else:
-                    if not data.reversed_entry_id:
-                        data.documento_hacienda_id.crear_factura()
-                    else:
-                        data.documento_hacienda_id.crear_nota_credito()
+                    res = data.documento_hacienda_id
+
+                if not data.reversed_entry_id:
+                    res.crear_factura()
+                else:
+                    res.crear_nota_credito()
+
+    def action_download_pdf_fe(self):
+        """v2.0: Descargar PDF de GTI y adjuntar al chatter."""
+        self.ensure_one()
+        doc = self.documento_hacienda_id
+        if not doc or not doc.consecutivo:
+            raise UserError(_(
+                'No hay documento GTI con consecutivo. '
+                'Primero envíe la factura a GTI.'
+            ))
+        return doc.descargar_pdf()
 
     def check_document(self):
         url = f"{self.company_id.gti_url}/Documentos/EstadoHacienda"
